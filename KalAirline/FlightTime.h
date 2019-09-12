@@ -12,6 +12,7 @@ namespace AirlineApp {
 		int getYear();
 		int getHour();
 		int getMinute();
+		std::string getString();
 	private:
 		int mMonth;
 		int mDay;

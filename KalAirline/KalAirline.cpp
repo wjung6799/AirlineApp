@@ -9,6 +9,9 @@ int displayMenu();
 int admin(DataManager& dbm);
 void addFlight(DataManager& dbm);
 int passenger(DataManager& dbm);
+int displayPassengerMenu(std::string& firstName, std::string& lastName);
+int flightBooking(DataManager& dbm, Passenger& passenger);
+
 int main()
 {
 	DataManager dataManager;
@@ -23,9 +26,12 @@ int main()
 			case 2:
 				passenger(dataManager);
 				break;
+			default:
+				std::cout << "Not a valid input. Please select one of the following" << std::endl;
 		}
 	}
 }
+
 
 int displayMenu() {
 	int selection;
@@ -62,6 +68,9 @@ void addFlight(DataManager& dbm) {
 	int minute;
 	int flightDuration;
 	int capacity;
+	std::string departure;
+	std::string destination;
+
 	std::cout << "Month?" << std::endl;
 	std::cin >> month;
 	std::cout << "Day?" << std::endl;
@@ -76,20 +85,71 @@ void addFlight(DataManager& dbm) {
 	std::cin >> flightDuration;
 	std::cout << "Capacity?" << std::endl;
 	std::cin >> capacity;
-	dbm.addFlight(month, day, year, hour, minute, flightDuration, capacity);
+	std::cin.ignore();
+	std::cout << "Departure?" << std::endl;
+	std::getline (std::cin, departure);
+
+	std::cout << "Destination?" << std::endl;
+	std::getline (std::cin, destination);
+
+	std::cout << "The flight has been added successfully!" << departure << destination <<std::endl;
+
+	dbm.addFlight(month, day, year, hour, minute, flightDuration, capacity, departure, destination);
 }
 
 int passenger(DataManager& dbm) {
+	while (true) {
+		std::string firstName;
+		std::string lastName;
+		int selection = displayPassengerMenu(firstName, lastName);
+		Passenger currentPassenger(firstName, lastName);
+		switch (selection) {
+		case 0:
+			return 0;
+		case 1:
+			flightBooking(dbm, currentPassenger);
+			return 0;
+		case 2:
+			
+			break;
+		default:
+
+			break;
+		}
+	}
 	return 0;
 }
 
-int displayPassengerMenu() {
+int flightBooking(DataManager& dbm, Passenger &passenger) {
+	while (true) {
+		dbm.displayFlight();
+		std::vector<Flight> flights = dbm.getAllFlight();
+		int selection;
+		std::cin >> selection;
+		if (selection < 1 || static_cast<int>(flights.size()) < selection) {
+			break;
+		}
+		else if (flights[selection - 1].mCapacity == 0) {
+			std::cout << "The flight is fully booked" << std::endl;
+			break;
+		} else {
+			flights[selection - 1].mCapacity--;
+			passenger.setFlight(flights[selection - 1]);
+			std::cout << "Booking is successful!" << std::endl;
+			return 0;
+		}
+	}
+	return 0;
+}
+
+int displayPassengerMenu(std::string &firstName, std::string &lastName) {
 	int selection;
-	std::cout << "1. Reserve a seat" << std::endl;
-	std::cout << "2. Flight Scheudle" << std::endl;
-	std::cout << "3. Display Passenger Info" << std::endl;
-	std::cout << "4. User ticket information" << std::endl;
-	std::cout << "2. Flight Scheudle" << std::endl;
+	std::cout << "Your first name?" << std::endl;
+	std::cin >> firstName;
+	std::cout << "Your last name?" << std::endl;
+	std::cin >> lastName;
+	std::cout << "1. Pick a flight" << std::endl;
+	std::cout << "2. Check in" << std::endl;
 	std::cout << std::endl;
 	std::cin >> selection;
 	return selection;

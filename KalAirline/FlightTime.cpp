@@ -43,4 +43,9 @@ namespace AirlineApp {
 	int FlightTime::getMinute() {
 		return mMinute;
 	}
+
+	std::string FlightTime::getString() {
+		std::string str = std::to_string(mMonth) + "/" + std::to_string(mDay) + "/" + std::to_string(mYear) + " @" + std::to_string(mHour) + ":" + std::to_string(mMinute);
+		return str;
+	}
 }
